@@ -1,1 +1,1 @@
-https://stackoverflow.com/questions/54961400/how-to-add-ip-whitelisting-to-spring-security
+https://stackoverflow.com/questions/54958335/how-to-redirect-after-login-to-a-specific-uri-in-spring-boot-auth2-facebook
