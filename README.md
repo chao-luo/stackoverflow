@@ -1,1 +1,1 @@
-https://stackoverflow.com/questions/54895230
+https://stackoverflow.com/questions/54961400/how-to-add-ip-whitelisting-to-spring-security
