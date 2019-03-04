@@ -1,0 +1,1 @@
+https://stackoverflow.com/questions/54958335/how-to-redirect-after-login-to-a-specific-uri-in-spring-boot-auth2-facebook
