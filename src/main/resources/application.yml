@@ -1,0 +1,8 @@
+paths: ping, ping1, ping2, ping3
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
