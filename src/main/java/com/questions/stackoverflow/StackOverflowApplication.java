@@ -36,46 +36,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @SpringBootApplication
 @Slf4j
-@EnableWebSecurity(debug = true)
-@EnableGlobalMethodSecurity(prePostEnabled = true)
 @RestController
-public class StackOverflowApplication extends WebSecurityConfigurerAdapter {
+public class StackOverflowApplication {
 
-    PasswordEncoder passwordEncoder =
-            PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
     public static void main(String[] args) {
         SpringApplication.run(StackOverflowApplication.class, args);
-    }
-
-    protected void configure(HttpSecurity http) throws Exception {
-        http
-                .csrf()
-                .disable()
-                .authorizeRequests()
-                .anyRequest().authenticated()
-                .and()
-                .httpBasic()
-                .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-    }
-
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
-                .passwordEncoder(passwordEncoder)
-                .withUser("user")
-                .password(passwordEncoder.encode("password"))
-                .roles("USER")
-                .and()
-                .passwordEncoder(passwordEncoder)
-                .withUser("manager")
-                .password("password")
-                .credentialsExpired(true)
-                .accountExpired(true)
-                .accountLocked(true)
-                .authorities("WRITE_PRIVILEGES", "READ_PRIVILEGES")
-                .roles("MANAGER");
     }
 
     @Bean
@@ -85,9 +51,7 @@ public class StackOverflowApplication extends WebSecurityConfigurerAdapter {
     }
 
     @GetMapping("/{userId}")
-    @PreAuthorize("#userId == authentication.principal.username")
-    public String getUser(@PathVariable String userId, Authentication authentication) {
-        final User principal = (User)authentication.getPrincipal();
-        return principal.getUsername();
+    public String getUser(@PathVariable String userId) {
+        return userId;
     }
 }
