@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class StackOverflowApplication extends WebSecurityConfigurerAdapter {
 
 
-    @GetMapping("/hi")
+    @GetMapping("/me")
     public User getUser(Authentication authentication) {
         final User principal = (User)authentication.getPrincipal();
         return principal;
