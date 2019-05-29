@@ -1,14 +1,9 @@
 package com.questions.stackoverflow;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
-import org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2SsoProperties;
-import org.springframework.boot.autoconfigure.security.oauth2.resource.ResourceServerTokenServicesConfiguration;
-import org.springframework.boot.autoconfigure.security.oauth2.resource.UserInfoRestTemplateFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -16,20 +11,11 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.client.OAuth2RestOperations;
-import org.springframework.security.oauth2.client.filter.OAuth2ClientAuthenticationProcessingFilter;
-import org.springframework.security.oauth2.provider.token.ResourceServerTokenServices;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.logout.LogoutFilter;
+import org.springframework.security.web.savedrequest.NullRequestCache;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,6 +27,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class StackOverflowApplication extends WebSecurityConfigurerAdapter {
 
+
+    @GetMapping("/hi")
+    public User getUser(Authentication authentication) {
+        final User principal = (User)authentication.getPrincipal();
+        return principal;
+    }
+
     PasswordEncoder passwordEncoder =
             PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
@@ -49,15 +42,12 @@ public class StackOverflowApplication extends WebSecurityConfigurerAdapter {
     }
 
     protected void configure(HttpSecurity http) throws Exception {
-        http
-                .csrf()
-                .disable()
-                .authorizeRequests()
+        http.authorizeRequests()
                 .anyRequest().authenticated()
-                .and()
-                .httpBasic()
-                .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .and().requestCache().requestCache(new NullRequestCache())
+                .and().httpBasic()
+                .and().csrf().disable();
+
     }
 
     @Override
@@ -84,10 +74,5 @@ public class StackOverflowApplication extends WebSecurityConfigurerAdapter {
         };
     }
 
-    @GetMapping("/{userId}")
-    @PreAuthorize("#userId == authentication.principal.username")
-    public String getUser(@PathVariable String userId, Authentication authentication) {
-        final User principal = (User)authentication.getPrincipal();
-        return principal.getUsername();
-    }
+
 }
